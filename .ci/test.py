@@ -41,6 +41,10 @@ Plugin = namedtuple(
 )
 
 
+def list_plugins(plugins):
+    return ", ".join([p.name for p in sorted(plugins)])
+
+
 def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
     plugins = list([
         x for x in basedir.iterdir() \
@@ -49,15 +53,17 @@ def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
     pip_pytest = [
         x for x in plugins if (x / Path('requirements.txt')).exists()
     ]
-    print(f'Pip plugins: {", ".join([p.name for p in sorted(pip_pytest)])}')
+    print(f"Pip plugins: {list_plugins(pip_pytest)}")
 
     poetry_pytest = [
         x for x in plugins if (x / Path("pyproject.toml")).exists()
     ]
-    print(f'Poetry plugins: {", ".join([p.name for p in sorted(poetry_pytest)])}')
+    print(f"Poetry plugins: {list_plugins(poetry_pytest)}")
 
-    other_plugins = [x for x in plugins if x not in pip_pytest and x not in poetry_pytest]
-    print(f'Other plugins: {", ".join([p.name for p in sorted(other_plugins)])}')
+    other_plugins = [
+        x for x in plugins if x not in pip_pytest and x not in poetry_pytest
+    ]
+    print(f"Other plugins: {list_plugins(other_plugins)}")
 
     for p in sorted(pip_pytest):
         yield Plugin(
