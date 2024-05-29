@@ -1,3 +1,8 @@
+import json
+import os
+import subprocess
+
+
 # gather data
 def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
     _dir = f"badges/gather_data/{workflow}/{plugin_name}"
@@ -43,6 +48,7 @@ def collect_gather_data(results, success):
     for t in results:
         p = t[0]
         from test import has_testfiles
+
         if has_testfiles(p):
             if success or t[1]:
                 gather_data[p.name] = "passed"
@@ -64,6 +70,7 @@ def collect_badges_data(results, success):
     for t in results:
         p = t[0]
         from test import has_testfiles
+
         if has_testfiles(p):
             if success or t[1]:
                 badges_data[p.name] = True
