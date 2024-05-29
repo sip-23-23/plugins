@@ -320,8 +320,9 @@ def run_all(workflow, update_badges, plugin_names):
     results = [(p, run_one(p)) for p in plugins]
     success = all([t[1] for t in results])
 
-    if sys.version_info[0:2] == (3, 12) and update_badges:
-        push_badges_data(collect_badges_data(results, success), workflow)
+    badges_data = {}
+    if update_badges:
+        badges_data = collect_badges_data(results, success)
 
     if not success:
         print("The following tests failed:")
