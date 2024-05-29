@@ -370,11 +370,11 @@ def update_and_commit_badge(plugin_name, passed, workflow, python_version):
     if output != "":
         subprocess.run(["git", "commit", "-m", f'Update {plugin_name} badge to {"passed" if passed else "failed"} ({workflow})'])
         return True
-    return False
+    return True
 
 
 def push_badges_data(data, workflow, python_version):
-    print("Pushing badge data...")
+    print("Pushing badges data...")
     configure_git()
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
