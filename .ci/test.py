@@ -327,6 +327,7 @@ def run_all(workflow, python_version, update_badges, plugin_names):
     success = all([t[1] for t in results])
 
     badges_data = {}
+    print("update_badges {update_badges}")
     if update_badges:
         push_badges_data(collect_badges_data(results, success), workflow, python_version)
 
