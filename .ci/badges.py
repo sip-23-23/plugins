@@ -42,6 +42,7 @@ def collect_gather_data(results, success):
     gather_data = {}
     for t in results:
         p = t[0]
+        from test import has_testfiles
         if has_testfiles(p):
             if success or t[1]:
                 gather_data[p.name] = "passed"
