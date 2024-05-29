@@ -376,7 +376,7 @@ def update_and_commit_badges_gather_data(plugin_name, passed, workflow, python_v
     return False
 
 
-def push_badges_gather_data(data, workflow):
+def push_badges_gather_data(data, workflow, python_version):
     print("Pushing badges gather data...")
     configure_git()
     subprocess.run(["git", "fetch"])
@@ -384,7 +384,7 @@ def push_badges_gather_data(data, workflow):
 
     any_changes = False
     for plugin_name, passed in data.items():
-        any_changes |= update_and_commit_badge(plugin_name, passed, workflow)
+        any_changes |= update_and_commit_badges_gather_data(plugin_name, passed, workflow, python_version)
 
     if any_changes:
         subprocess.run(["git", "push", "origin", "badges"])
