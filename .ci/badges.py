@@ -26,11 +26,13 @@ def update_and_commit_gather_data(plugin_name, result, workflow, python_version)
     return False
 
 
-def push_gather_data(data, workflow, python_version):
+def push_gather_data(results, success, workflow, python_version):
     print("Pushing gather data...")
     configure_git()
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
+
+    data = collect_gather_data(results, success)
 
     any_changes = False
     for plugin_name, result in data.items():

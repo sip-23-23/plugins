@@ -9,7 +9,7 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path, PosixPath
 from typing import Generator, List
-from badges import collect_gather_data, push_gather_data
+from badges import push_gather_data
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -330,9 +330,8 @@ def run_all(workflow, python_version, update_badges, plugin_names):
     print(f"update_badges: {update_badges}")
     if update_badges:
         print(f"debug 1")
-        data = collect_gather_data(results, success)
         print(f"debug 2")
-        push_gather_data(data, workflow, python_version)
+        push_gather_data(results, success, workflow, python_version)
     print(f"debug 3")
     if not success:
         print("The following tests failed:")
