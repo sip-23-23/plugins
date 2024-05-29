@@ -307,7 +307,7 @@ def run_one(p: Plugin) -> bool:
         print("##[endgroup]")
 
 
-def run_all(workflow, update_badges, plugin_names):
+def run_all(workflow, python_version, update_badges, plugin_names):
     root_path = subprocess.check_output([
         'git',
         'rev-parse',
@@ -328,7 +328,7 @@ def run_all(workflow, update_badges, plugin_names):
 
     badges_data = {}
     if update_badges:
-        badges_data = collect_badges_data(results, success)
+        push_badges_data(collect_badges_data(results, success), workflow, python_version)
 
     if not success:
         print("The following tests failed:")
@@ -356,12 +356,12 @@ def configure_git():
     subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
 
 
-def update_and_commit_badge(plugin_name, passed, workflow):
+def update_and_commit_badge(plugin_name, passed, workflow, python_version):
     json_data = { "schemaVersion": 1, "label": "", "message": " ✔ ", "color": "green" }
     if not passed:
         json_data.update({"message": "✗", "color": "red"})
 
-    filename = os.path.join("badges", f"{plugin_name}_{workflow}.json")
+    filename = os.path.join("{python_version}/badges", f"{plugin_name}_{workflow}_python{python_version}.json")
     with open(filename, "w") as file:
         file.write(json.dumps(json_data))
 
@@ -372,7 +372,7 @@ def update_and_commit_badge(plugin_name, passed, workflow):
     return False
 
 
-def push_badges_data(data, workflow):
+def push_badges_data(data, workflow, python_version):
     print("Pushing badge data...")
     configure_git()
     subprocess.run(["git", "fetch"])
@@ -380,7 +380,7 @@ def push_badges_data(data, workflow):
 
     any_changes = False
     for plugin_name, passed in data.items():
-        any_changes |= update_and_commit_badge(plugin_name, passed, workflow)
+        any_changes |= update_and_commit_badge(plugin_name, passed, workflow, python_version)
 
     if any_changes:
         subprocess.run(["git", "push", "origin", "badges"])
@@ -392,8 +392,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plugins test script')
     parser.add_argument("workflow", type=str, help="Name of the GitHub workflow")
+    parser.add_argument("python_version", type=str, help="Python version")
     parser.add_argument("--update-badges", action='store_true', help="Whether badges data should be updated")
     parser.add_argument("plugins", nargs="*", default=[], help="List of plugins")
     args = parser.parse_args()
 
-    run_all(args.workflow, args.update_badges, args.plugins)
+    run_all(args.workflow, args.python_version, args.update_badges, args.plugins)
