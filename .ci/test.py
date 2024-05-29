@@ -329,8 +329,11 @@ def run_all(workflow, python_version, update_badges, plugin_names):
 
     print(f"update_badges: {update_badges}")
     if update_badges:
-        push_gather_data(collect_gather_data(results, success), workflow, python_version)
-
+        print(f"debug 1")
+        data = collect_gather_data(results, success)
+        print(f"debug 2")
+        push_gather_data(data, workflow, python_version)
+    print(f"debug 3")
     if not success:
         print("The following tests failed:")
         for t in filter(lambda t: not t[1], results):
