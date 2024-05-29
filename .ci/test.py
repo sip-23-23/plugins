@@ -359,7 +359,7 @@ def configure_git():
 def update_and_commit_badges_gather_data(plugin_name, passed, workflow, python_version):
     result = "passed" if passed else "failed"
 
-    badges_dir = f"badges/gather_data/{workflow}/{plugin_name}/{python_version}"
+    badges_dir = f"badges/gather_data/{workflow}/{plugin_name}"
     filename = os.path.join(badges_dir, f"python{python_version}.txt")
     os.makedirs(badges_dir, exist_ok=True)
     with open(filename, "w") as file:
