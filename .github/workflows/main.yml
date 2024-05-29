@@ -105,8 +105,8 @@ jobs:
         then
             update_badges='--update-badges'
         fi
-
-        python3 .ci/test.py main 3.11 $update_badges $(echo "$plugin_dirs")
+        echo "<<< ${{ matrix.python-version }} >>>"
+        python3 .ci/test.py main ${{ matrix.python-version }} $update_badges $(echo "$plugin_dirs")
 
   gather:
     # A dummy task that depends on the full matrix of tests, and
