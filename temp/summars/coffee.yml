@@ -1,9 +1,0 @@
-plugin:
-  name: summars
-  version: 3.1.0
-  lang: rust
-  install: |
-    cargo build --release && cp target/release/summars . && cargo clean
-  main: summars
-tipping:
-  bolt12: lno1pgrhxatdd4shyucjpdjxz7thv9kxketj8ycpvggrsrhsyz0lrdrv8z3he4q0vy73mt37hfyp4yy5t8tvzs62petwtkxq
