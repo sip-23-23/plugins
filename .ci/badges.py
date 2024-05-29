@@ -9,7 +9,7 @@ def update_and_commit_gather_data(plugin_name, result, workflow, python_version)
 
     output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")#
     if output != "":
-        subprocess.run(["git", "commit", "-m", f'Update {plugin_name} test result to '{result}' ({workflow} workflow)'])
+        subprocess.run(["git", "commit", "-m", f"Update {plugin_name} test result to '{result}' ({workflow} workflow)"])
         return True
     return False
 
