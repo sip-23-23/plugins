@@ -362,7 +362,7 @@ def update_and_commit_badge(plugin_name, passed, workflow, python_version):
     if not passed:
         json_data.update({"message": "✗", "color": "red"})
 
-    badges_dir = f"gather_data/{python_version}"
+    badges_dir = f"badges/gather_data/{python_version}"
     filename = os.path.join(badges_dir, f"{plugin_name}_{workflow}_python{python_version}.json")
     os.makedirs(badges_dir, exist_ok=True)
     with open(filename, "w") as file:
