@@ -366,13 +366,15 @@ def update_and_commit_badge(plugin_name, passed, workflow, python_version):
     filename = os.path.join(badges_dir, f"{plugin_name}_{workflow}_python{python_version}.json")
     os.makedirs(badges_dir, exist_ok=True)
     with open(filename, "w") as file:
+        print(f"Writing {filename}")
         file.write(json.dumps(json_data))
 
-    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")
+    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")#
+    print(f"output:{output}.")
     if output != "":
         subprocess.run(["git", "commit", "-m", f'Update {plugin_name} badge to {"passed" if passed else "failed"} ({workflow})'])
         return True
-    return False
+    return True
 
 
 def push_badges_data(data, workflow, python_version):
