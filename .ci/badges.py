@@ -62,6 +62,7 @@ def collect_badges_data(results, success):
     badges_data = {}
     for t in results:
         p = t[0]
+        from test import has_testfiles
         if has_testfiles(p):
             if success or t[1]:
                 badges_data[p.name] = True
