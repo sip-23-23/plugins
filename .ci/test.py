@@ -9,6 +9,7 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path, PosixPath
 from typing import Generator, List
+from badges import collect_gather_data, push_gather_data
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -328,7 +329,7 @@ def run_all(workflow, python_version, update_badges, plugin_names):
 
     print(f"update_badges: {update_badges}")
     if update_badges:
-        push_badges_gather_data(collect_badges_gather_data(results, success), workflow, python_version)
+        push_gather_data(collect_gather_data(results, success), workflow, python_version)
 
     if not success:
         print("The following tests failed:")
@@ -337,58 +338,6 @@ def run_all(workflow, python_version, update_badges, plugin_names):
         sys.exit(1)
     else:
         print("All tests passed.")
-
-
-def collect_badges_gather_data(results, success):
-    badges_data = {}
-    for t in results:
-        p = t[0]
-        if has_testfiles(p):
-            if success or t[1]:
-                badges_data[p.name] = True
-            else:
-                badges_data[p.name] = False
-    return badges_data
-
-
-def configure_git():
-    subprocess.run(["git", "config", "--global", "user.email", '"lightningd@plugins.repo"'])
-    subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
-
-
-def update_and_commit_badges_gather_data(plugin_name, passed, workflow, python_version):
-    result = "passed" if passed else "failed"
-
-    badges_dir = f"badges/gather_data/{workflow}/{plugin_name}"
-    filename = os.path.join(badges_dir, f"python{python_version}.txt")
-    os.makedirs(badges_dir, exist_ok=True)
-    with open(filename, "w") as file:
-        print(f"Writing {filename}")
-        file.write(result)
-
-    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")#
-
-    # TODO remove
-    print(f"output:{output}.")
-    if output != "":
-        subprocess.run(["git", "commit", "-m", f'Update {plugin_name} badge to {result} ({workflow} workflow)'])
-        return True
-    return False
-
-
-def push_badges_gather_data(data, workflow, python_version):
-    print("Pushing badges gather data...")
-    configure_git()
-    subprocess.run(["git", "fetch"])
-    subprocess.run(["git", "checkout", "badges"])
-
-    any_changes = False
-    for plugin_name, passed in data.items():
-        any_changes |= update_and_commit_badges_gather_data(plugin_name, passed, workflow, python_version)
-
-    if any_changes:
-        subprocess.run(["git", "push", "origin", "badges"])
-    print("Done.")
 
 
 if __name__ == "__main__":
