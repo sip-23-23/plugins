@@ -9,7 +9,7 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path, PosixPath
 from typing import Generator, List
-from badges import push_gather_data
+# from badges import push_gather_data
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -306,6 +306,66 @@ def run_one(p: Plugin) -> bool:
         return False
     finally:
         print("##[endgroup]")
+
+def configure_git():
+    subprocess.run(
+        ["git", "config", "--global", "user.email", '"lightningd@plugins.repo"']
+    )
+    subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
+
+
+# gather data
+def collect_gather_data(results, success):
+    gather_data = {}
+    for t in results:
+        p = t[0]
+        if has_testfiles(p):
+            if success or t[1]:
+                gather_data[p.name] = "passed"
+            else:
+                gather_data[p.name] = "failed"
+    return gather_data
+
+
+def push_gather_data(results, success, workflow, python_version):
+    print("Pushing gather data...")
+    configure_git()
+    subprocess.run(["git", "fetch"])
+    subprocess.run(["git", "checkout", "badges"])
+
+    data = collect_gather_data(results, success)
+
+    any_changes = False
+    for plugin_name, result in data.items():
+        any_changes |= update_and_commit_gather_data(
+            plugin_name, result, workflow, python_version
+        )
+
+    if any_changes:
+        subprocess.run(["git", "push", "origin", "badges"])
+    print("Done.")
+
+
+def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
+    _dir = f"badges/gather_data/{workflow}/{plugin_name}"
+    filename = os.path.join(_dir, f"python{python_version}.txt")
+    os.makedirs(_dir, exist_ok=True)
+    with open(filename, "w") as file:
+        print(f"Writing {filename}")
+        file.write(result)
+
+    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")  #
+    if output != "":
+        subprocess.run(
+            [
+                "git",
+                "commit",
+                "-m",
+                f"Update {plugin_name} test result to '{result}' ({workflow} workflow)",
+            ]
+        )
+        return True
+    return False
 
 
 def run_all(workflow, python_version, update_badges, plugin_names):
