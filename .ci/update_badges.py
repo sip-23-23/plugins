@@ -6,23 +6,24 @@ from pathlib import Path, PosixPath
 from typing import Generator, List
 
 Plugin = namedtuple(
-    'Plugin',
+    "Plugin",
     [
-        'name',
-        'path',
-        'language',
-        'framework',
-        'details',
-    ]
+        "name",
+        "path",
+        "language",
+        "framework",
+        "details",
+    ],
 )
 
 exclude = [
-    '.ci',
-    '.git',
-    '.github',
-    'archived',
-    'lightning',
+    ".ci",
+    ".git",
+    ".github",
+    "archived",
+    "lightning",
 ]
+
 
 def configure_git():
     subprocess.run(
@@ -30,33 +31,32 @@ def configure_git():
     )
     subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
 
+
 def get_testfiles(p: Plugin) -> List[PosixPath]:
     return [
-        x for x in p.path.iterdir()
-        if (x.is_dir() and x.name == 'tests')
-        or (x.name.startswith("test_") and x.name.endswith('.py'))
+        x
+        for x in p.path.iterdir()
+        if (x.is_dir() and x.name == "tests")
+        or (x.name.startswith("test_") and x.name.endswith(".py"))
     ]
+
 
 def has_testfiles(p: Plugin) -> bool:
     return len(get_testfiles(p)) > 0
+
 
 def list_plugins(plugins):
     return ", ".join([p.name for p in sorted(plugins)])
 
 
 def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
-    plugins = list([
-        x for x in basedir.iterdir() \
-        if x.is_dir() and x.name not in exclude
-    ])
-    pip_pytest = [
-        x for x in plugins if (x / Path('requirements.txt')).exists()
-    ]
+    plugins = list(
+        [x for x in basedir.iterdir() if x.is_dir() and x.name not in exclude]
+    )
+    pip_pytest = [x for x in plugins if (x / Path("requirements.txt")).exists()]
     print(f"Pip plugins: {list_plugins(pip_pytest)}")
 
-    poetry_pytest = [
-        x for x in plugins if (x / Path("pyproject.toml")).exists()
-    ]
+    poetry_pytest = [x for x in plugins if (x / Path("pyproject.toml")).exists()]
     print(f"Poetry plugins: {list_plugins(poetry_pytest)}")
 
     other_plugins = [
@@ -71,9 +71,9 @@ def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
             language="python",
             framework="pip",
             details={
-                "requirements": p/Path('requirements.txt'),
-                "devrequirements": p/Path('requirements-dev.txt'),
-            }
+                "requirements": p / Path("requirements.txt"),
+                "devrequirements": p / Path("requirements-dev.txt"),
+            },
         )
 
     for p in sorted(poetry_pytest):
@@ -84,7 +84,7 @@ def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
             framework="poetry",
             details={
                 "pyproject": p / Path("pyproject.toml"),
-            }
+            },
         )
 
     for p in sorted(other_plugins):
@@ -96,8 +96,9 @@ def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
             details={
                 "requirements": p / Path("tests/requirements.txt"),
                 "setup": p / Path("tests/setup.sh"),
-            }
+            },
         )
+
 
 def collect_badges_data(results, success):
     badges_data = {}
@@ -147,27 +148,29 @@ def push_badges_data(workflow, num_of_python_versions):
     subprocess.run(["git", "checkout", "badges"])
     subprocess.run(["git", "pull"])
 
-    root_path = subprocess.check_output([
-        'git',
-        'rev-parse',
-        '--show-toplevel'
-    ]).decode('ASCII').strip()
+    root_path = (
+        subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
+        .decode("ASCII")
+        .strip()
+    )
 
     root = Path(root_path)
 
     plugins = list(enumerate_plugins(root))
 
-
     any_changes = False
     for p in plugins:
-        from pathlib import Path
-
+        plugin_name = p.name
         results = []
-        for child in Path(f"badges/gather_data/main/{p.name}").iterdir():
+        for child in Path(f"badges/gather_data/main/{plugin_name}").iterdir():
             results.append(child.read_text().strip())
 
         passed = False
-        if len(set(results)) == 1 and len(results) == num_of_python_versions and results[0] == "passed"
+        if (
+            len(set(results)) == 1
+            and len(results) == num_of_python_versions
+            and results[0] == "passed"
+        ):
             passed = False
         any_changes |= update_and_commit_badge(plugin_name, passed, workflow)
 
@@ -181,7 +184,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Plugins completion script")
     parser.add_argument("workflow", type=str, help="Name of the GitHub workflow")
-    parser.add_argument("num_of_python_versions", type=str, help="Number of Python versions")
+    parser.add_argument(
+        "num_of_python_versions", type=str, help="Number of Python versions"
+    )
     args = parser.parse_args()
 
     push_badges_data(args.workflow, args.num_of_python_versions)
