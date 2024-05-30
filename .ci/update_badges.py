@@ -146,7 +146,7 @@ def push_badges_data(workflow, num_of_python_versions):
             and len(results) == num_of_python_versions
             and results[0] == "passed"
         ):
-            passed = False
+            passed = True
         any_changes |= update_and_commit_badge(plugin_name, passed, workflow)
 
     if any_changes:
