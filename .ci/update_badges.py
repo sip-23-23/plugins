@@ -140,7 +140,7 @@ def update_and_commit_badge(plugin_name, passed, workflow, python_version):
     return False
 
 
-def push_badges_data(data, workflow):
+def push_badges_data(workflow, num_of_python_versions):
     print("Pushing badge data...")
     configure_git()
     subprocess.run(["git", "fetch"])
@@ -167,8 +167,8 @@ def push_badges_data(data, workflow):
             results.append(child.read_text().strip())
 
         passed = False
-        if len(set(results)) == 1 and results[0] == "passed"
-            passed = False
+        if len(set(results)) == 1 and len(results) == num_of_python_versions and results[0] == "passed"
+            passed = True
         any_changes |= update_and_commit_badge(plugin_name, passed, workflow)
 
     if any_changes:
