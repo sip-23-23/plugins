@@ -105,9 +105,10 @@ jobs:
         then
             update_badges='--update-badges'
         fi
+
         # TODO remove
         update_badges='--update-badges'
-        echo "<<< ${{ matrix.python-version }} >>>"
+
         python3 .ci/test.py main ${{ matrix.python-version }} $update_badges $(echo "$plugin_dirs")
 
   gather:

@@ -3,27 +3,26 @@ import os
 import subprocess
 
 
-# gather data
-def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
-    _dir = f"badges/gather_data/{workflow}/{plugin_name}"
-    filename = os.path.join(_dir, f"python{python_version}.txt")
-    os.makedirs(_dir, exist_ok=True)
-    with open(filename, "w") as file:
-        print(f"Writing {filename}")
-        file.write(result)
+def configure_git():
+    subprocess.run(
+        ["git", "config", "--global", "user.email", '"lightningd@plugins.repo"']
+    )
+    subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
 
-    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")  #
-    if output != "":
-        subprocess.run(
-            [
-                "git",
-                "commit",
-                "-m",
-                f"Update {plugin_name} test result to '{result}' ({workflow} workflow)",
-            ]
-        )
-        return True
-    return False
+
+# gather data
+def collect_gather_data(results, success):
+    gather_data = {}
+    for t in results:
+        p = t[0]
+        from test import has_testfiles
+
+        if has_testfiles(p):
+            if success or t[1]:
+                gather_data[p.name] = "passed"
+            else:
+                gather_data[p.name] = "failed"
+    return gather_data
 
 
 def push_gather_data(results, success, workflow, python_version):
@@ -45,25 +44,26 @@ def push_gather_data(results, success, workflow, python_version):
     print("Done.")
 
 
-def collect_gather_data(results, success):
-    gather_data = {}
-    for t in results:
-        p = t[0]
-        from test import has_testfiles
+def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
+    _dir = f"badges/gather_data/{workflow}/{plugin_name}"
+    filename = os.path.join(_dir, f"python{python_version}.txt")
+    os.makedirs(_dir, exist_ok=True)
+    with open(filename, "w") as file:
+        print(f"Writing {filename}")
+        file.write(result)
 
-        if has_testfiles(p):
-            if success or t[1]:
-                gather_data[p.name] = "passed"
-            else:
-                gather_data[p.name] = "failed"
-    return gather_data
-
-
-def configure_git():
-    subprocess.run(
-        ["git", "config", "--global", "user.email", '"lightningd@plugins.repo"']
-    )
-    subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
+    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")  #
+    if output != "":
+        subprocess.run(
+            [
+                "git",
+                "commit",
+                "-m",
+                f"Update {plugin_name} test result to '{result}' ({workflow} workflow)",
+            ]
+        )
+        return True
+    return False
 
 
 # badges data

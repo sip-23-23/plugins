@@ -327,12 +327,9 @@ def run_all(workflow, python_version, update_badges, plugin_names):
     results = [(p, run_one(p)) for p in plugins]
     success = all([t[1] for t in results])
 
-    print(f"update_badges: {update_badges}")
     if update_badges:
-        print(f"debug 1")
-        print(f"debug 2")
         push_gather_data(results, success, workflow, python_version)
-    print(f"debug 3")
+
     if not success:
         print("The following tests failed:")
         for t in filter(lambda t: not t[1], results):
