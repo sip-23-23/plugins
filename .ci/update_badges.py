@@ -100,18 +100,6 @@ def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
         )
 
 
-def collect_badges_data(results, success):
-    badges_data = {}
-    for t in results:
-        p = t[0]
-        if has_testfiles(p):
-            if success or t[1]:
-                badges_data[p.name] = True
-            else:
-                badges_data[p.name] = False
-    return badges_data
-
-
 def update_and_commit_badge(plugin_name, passed, workflow):
     json_data = { "schemaVersion": 1, "label": "", "message": " ✔ ", "color": "green" }
     if not passed:
@@ -143,7 +131,8 @@ def push_badges_data(workflow, num_of_python_versions):
 
     root = Path(root_path)
 
-    plugins = list(enumerate_plugins(root))
+    # plugins = list(enumerate_plugins(root))
+    plugins = ["clearnet", "zmq"]
 
     any_changes = False
     for p in plugins:
