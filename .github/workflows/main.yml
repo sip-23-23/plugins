@@ -122,5 +122,6 @@ jobs:
     steps:
       - name: Complete
         run: |
-          echo CI completed successfully
-
+          echo "Updating badges data..."
+          python3 .ci/update_badges.py main 5
+          echo "CI completed successfully"

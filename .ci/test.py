@@ -330,11 +330,8 @@ def collect_gather_data(results, success):
 def push_gather_data(data, workflow, python_version):
     print("Pushing gather data...")
     configure_git()
-    print("configure_git.")
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
-    print("subprocess.")
-    print("collect_gather_data.")
     any_changes = False
     for plugin_name, result in data.items():
         any_changes |= update_and_commit_gather_data(
@@ -347,12 +344,9 @@ def push_gather_data(data, workflow, python_version):
 
 
 def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
-    print("update_and_commit_gather_data.")
     _dir = f"badges/gather_data/{workflow}/{plugin_name}"
     filename = os.path.join(_dir, f"python{python_version}.txt")
-    print("makedirs.")
     os.makedirs(_dir, exist_ok=True)
-    print("makedirs2.")
     with open(filename, "w") as file:
         print(f"Writing {filename}")
         file.write(result)
