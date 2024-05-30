@@ -334,16 +334,24 @@ def push_gather_data(data, workflow, python_version):
     subprocess.run(["git", "checkout", "badges"])
     any_changes = False
     for plugin_name, result in data.items():
-        any_changes |= update_and_commit_gather_data(
+        any_changes |= git_add_gather_data(
             plugin_name, result, workflow, python_version
         )
-
     if any_changes:
+        output = subprocess.check_output(
+            [
+                "git",
+                "commit",
+                "-m",
+                f"Update test result for Python{python_version} to ({workflow} workflow)",
+            ]
+        ).decode("utf-8")
+        print(f"output from git commit: {output}")
         subprocess.run(["git", "push", "origin", "badges"])
     print("Done.")
 
 
-def update_and_commit_gather_data(plugin_name, result, workflow, python_version):
+def git_add_gather_data(plugin_name, result, workflow, python_version):
     _dir = f"badges/gather_data/{workflow}/{plugin_name}"
     filename = os.path.join(_dir, f"python{python_version}.txt")
     os.makedirs(_dir, exist_ok=True)
@@ -354,15 +362,15 @@ def update_and_commit_gather_data(plugin_name, result, workflow, python_version)
     output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")
     print(f"output from git add: {output}")
     if output != "":
-        output = subprocess.check_output(
-            [
-                "git",
-                "commit",
-                "-m",
-                f"Update {plugin_name} test result for Python{python_version} to '{result}' ({workflow} workflow)",
-            ]
-        ).decode("utf-8")
-        print(f"output from git commit: {output}")
+    #    output = subprocess.check_output(
+    #        [
+    #            "git",
+    #            "commit",
+    #            "-m",
+    #            f"Update {plugin_name} test result for Python{python_version} to '{result}' ({workflow} workflow)",
+    #        ]
+    #    ).decode("utf-8")
+    #    print(f"output from git commit: {output}")
         return True
     return False
 
