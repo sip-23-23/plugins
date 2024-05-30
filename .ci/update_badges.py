@@ -136,10 +136,12 @@ def push_badges_data(workflow, num_of_python_versions):
 
     any_changes = False
     for plugin_name in plugins:
+        print(plugin_name)
         results = []
         for child in Path(f"badges/gather_data/main/{plugin_name}").iterdir():
+            print(child)
             results.append(child.read_text().strip())
-
+        print(results)
         passed = False
         if (
             len(set(results)) == 1
@@ -164,4 +166,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    push_badges_data(args.workflow, args.num_of_python_versions)
+    push_badges_data(args.workflow, int(args.num_of_python_versions))
