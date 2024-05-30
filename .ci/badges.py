@@ -1,17 +1,21 @@
 import json
 import os
 import subprocess
+from collections import namedtuple
+from pathlib import PosixPath
+from typing import List
 
 Plugin = namedtuple(
-    'Plugin',
+    "Plugin",
     [
-        'name',
-        'path',
-        'language',
-        'framework',
-        'details',
-    ]
+        "name",
+        "path",
+        "language",
+        "framework",
+        "details",
+    ],
 )
+
 
 def configure_git():
     subprocess.run(
@@ -19,8 +23,19 @@ def configure_git():
     )
     subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
 
+
 def has_testfiles(p: Plugin) -> bool:
     return len(get_testfiles(p)) > 0
+
+
+def get_testfiles(p: Plugin) -> List[PosixPath]:
+    return [
+        x
+        for x in p.path.iterdir()
+        if (x.is_dir() and x.name == "tests")
+        or (x.name.startswith("test_") and x.name.endswith(".py"))
+    ]
+
 
 # gather data
 def collect_gather_data(results, success):
