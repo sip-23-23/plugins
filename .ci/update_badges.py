@@ -135,8 +135,7 @@ def push_badges_data(workflow, num_of_python_versions):
     plugins = ["clearnet", "zmq"]
 
     any_changes = False
-    for p in plugins:
-        plugin_name = p.name
+    for plugin_name in plugins:
         results = []
         for child in Path(f"badges/gather_data/main/{plugin_name}").iterdir():
             results.append(child.read_text().strip())
