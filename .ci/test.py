@@ -351,16 +351,18 @@ def update_and_commit_gather_data(plugin_name, result, workflow, python_version)
         print(f"Writing {filename}")
         file.write(result)
 
-    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")  #
+    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")
+    print(f"output from git add: {output}")
     if output != "":
-        subprocess.run(
+        output = subprocess.check_output(
             [
                 "git",
                 "commit",
                 "-m",
-                f"Update {plugin_name} test result to '{result}' ({workflow} workflow)",
+                f"Update {plugin_name} test result for Python{python_version} to '{result}' ({workflow} workflow)",
             ]
-        )
+        ).decode("utf-8")
+        print(f"output from git commit: {output}")
         return True
     return False
 
