@@ -327,14 +327,13 @@ def collect_gather_data(results, success):
     return gather_data
 
 
-def push_gather_data(results, success, workflow, python_version):
+def push_gather_data(data, workflow, python_version):
     print("Pushing gather data...")
     configure_git()
     print("configure_git.")
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
     print("subprocess.")
-    data = collect_gather_data(results, success)
     print("collect_gather_data.")
     any_changes = False
     for plugin_name, result in data.items():
@@ -392,7 +391,7 @@ def run_all(workflow, python_version, update_badges, plugin_names):
     success = all([t[1] for t in results])
 
     if update_badges:
-        push_gather_data(results, success, workflow, python_version)
+        push_gather_data(collect_gather_data(results, success), workflow, python_version)
 
     if not success:
         print("The following tests failed:")
