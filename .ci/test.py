@@ -332,12 +332,14 @@ def push_gather_data(data, workflow, python_version):
     configure_git()
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
-    any_changes = False
+    filenames_to_add = []
     for plugin_name, result in data.items():
-        any_changes |= git_add_gather_data(
+        filenames_to_add.append(git_add_gather_data(
             plugin_name, result, workflow, python_version
-        )
-    if any_changes:
+        ))
+    output = subprocess.check_output(["git", "add", "-v", " ".join(filenames_to_add)]).decode("utf-8")
+    print(f"output from git add: {output}")
+    if output != "":
         output = subprocess.check_output(
             [
                 "git",
@@ -359,9 +361,11 @@ def git_add_gather_data(plugin_name, result, workflow, python_version):
         print(f"Writing {filename}")
         file.write(result)
 
-    output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")
-    print(f"output from git add: {output}")
-    if output != "":
+    return filename
+
+    # output = subprocess.check_output(["git", "add", "-v", filename]).decode("utf-8")
+    # print(f"output from git add: {output}")
+    # if output != "":
     #    output = subprocess.check_output(
     #        [
     #            "git",
@@ -371,8 +375,8 @@ def git_add_gather_data(plugin_name, result, workflow, python_version):
     #        ]
     #    ).decode("utf-8")
     #    print(f"output from git commit: {output}")
-        return True
-    return False
+    #    return True
+    #return False
 
 
 def run_all(workflow, python_version, update_badges, plugin_names):
