@@ -10,12 +10,10 @@ Community curated plugins for Core-Lightning.
 | Name                                 | Short description                                                                           | CLN ![GitHub Release](https://img.shields.io/github/v/release/ElementsProject/lightning?label=%20&color=393D47) | CLN ![Static Badge](https://img.shields.io/badge/master-master?color=393D47) |
 | ------------------------------------ | ------------------------------------------------------------------------------------------- | :----: | :-----: |
 | [backup][backup]                     | A simple and reliable backup plugin                                                         | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fbackup_main.json) | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fbackup_nightly.json) |
-| [boltz-channel-creation][boltz]      | A Core-Lightning plugin for Boltz Channel Creation Swaps                                    |        |         |
 | [btcli4j][btcli4j]                   | A Bitcoin Backend to enable safely the pruning mode, and support also rest APIs.            |        |         |
 | [circular][circular]                 | A smart rebalancing plugin for Core Lightning routing nodes                                 |        |         |
 | [clearnet][clearnet]                 | A plugin that can be used to enforce clearnet connections when possible                     | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fclearnet_main.json) | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fclearnet_nightly.json) |
 | [cln-ntfy][cln-ntfy]                 | Core Lightning plugin for sending `ntfy` alerts.                                            |        |         |
-| [csvexportpays][csvexportpays]       | A plugin that exports all payments to a CSV file                                            |        |         |
 | [currencyrate][currencyrate]         | A plugin to convert other currencies to BTC using web requests                              |        |         |
 | [datastore][datastore]               | The Datastore Plugin                                                                        | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fdatastore_main.json) | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fdatastore_nightly.json) |
 | [donations][donations]               | A simple donations page to accept donations from the web                                    | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fdonations_main.json) | ![](https://img.shields.io/endpoint?url=https%3A%2F%2Flightningd.github.io%2Fplugins%2Fbadges%2Fdonations_nightly.json) |
@@ -199,7 +197,6 @@ Python plugins developers must ensure their plugin to work with all Python versi
 [autopilot]: https://github.com/lightningd/plugins/tree/master/archived/autopilot
 [backup]: https://github.com/lightningd/plugins/tree/master/backup
 [blip12]: https://github.com/lightning/blips/blob/42cec1d0f66eb68c840443abb609a5a9acb34f8e/blip-0012.md
-[boltz]: https://github.com/BoltzExchange/channel-creation-plugin
 [btcli4j]: https://github.com/clightning4j/btcli4j
 [c-api]: https://github.com/ElementsProject/lightning/blob/master/plugins/libplugin.h
 [circular]: https://github.com/giovannizotta/circular
@@ -208,7 +205,6 @@ Python plugins developers must ensure their plugin to work with all Python versi
 [commando]: https://github.com/lightningd/plugins/tree/master/archived/commando
 [cpp-api]: https://github.com/darosior/lightningcpp
 [csharp-example]: https://github.com/joemphilips/DotNetLightning/tree/master/examples/HelloWorldPlugin
-[csvexportpays]: https://github.com/0xB10C/c-lightning-plugin-csvexportpays
 [currencyrate]: https://github.com/lightningd/plugins/tree/master/currencyrate
 [datastore]: https://github.com/lightningd/plugins/tree/master/datastore
 [donations]: https://github.com/lightningd/plugins/tree/master/donations
