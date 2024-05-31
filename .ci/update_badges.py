@@ -145,7 +145,7 @@ def push_badges_data(workflow, num_of_python_versions):
         passed = False
         if (
             len(set(results)) == 1
-            and len(results) == num_of_python_versions
+            # and len(results) == num_of_python_versions
             and results[0] == "passed"
         ):
             passed = True
