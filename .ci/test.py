@@ -9,7 +9,7 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path, PosixPath
 from typing import Generator, List
-# from badges import push_gather_data
+from itertools import chain
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -337,7 +337,7 @@ def push_gather_data(data, workflow, python_version):
         filenames_to_add.append(git_add_gather_data(
             plugin_name, result, workflow, python_version
         ))
-    output = subprocess.check_output(["git", "add", "-v"].extend(filenames_to_add)).decode("utf-8")
+    output = subprocess.check_output(list(chain(["git", "add", "-v"], filenames_to_add))).decode("utf-8")
     print(f"output from git add: {output}")
     if output != "":
         output = subprocess.check_output(
