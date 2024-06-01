@@ -11,6 +11,8 @@ from pathlib import Path, PosixPath
 from typing import Generator, List
 from itertools import chain
 
+from update_badges import Plugin
+
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 # Directories that are not plugins
@@ -29,17 +31,6 @@ global_dependencies = [
 ]
 
 pip_opts = ['-qq']
-
-Plugin = namedtuple(
-    'Plugin',
-    [
-        'name',
-        'path',
-        'language',
-        'framework',
-        'details',
-    ]
-)
 
 
 def list_plugins(plugins):
