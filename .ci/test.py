@@ -1,96 +1,16 @@
-import json
 import logging
 import os
-import shlex
-import shutil
 import subprocess
 import sys
 import tempfile
-from collections import namedtuple
-from pathlib import Path, PosixPath
-from typing import Generator, List
 from itertools import chain
+from pathlib import Path
 
-from update_badges import Plugin
+from utils import (Plugin, configure_git, enumerate_plugins, get_testfiles,
+                   has_testfiles)
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-# Directories that are not plugins
-exclude = [
-    '.ci',
-    '.git',
-    '.github',
-    'archived',
-    'lightning',
-]
-
-global_dependencies = [
-    'pytest',
-    'pytest-xdist',
-    'pytest-timeout',
-]
-
-pip_opts = ['-qq']
-
-
-def list_plugins(plugins):
-    return ", ".join([p.name for p in sorted(plugins)])
-
-
-def enumerate_plugins(basedir: Path) -> Generator[Plugin, None, None]:
-    plugins = list([
-        x for x in basedir.iterdir() \
-        if x.is_dir() and x.name not in exclude
-    ])
-    pip_pytest = [
-        x for x in plugins if (x / Path('requirements.txt')).exists()
-    ]
-    print(f"Pip plugins: {list_plugins(pip_pytest)}")
-
-    poetry_pytest = [
-        x for x in plugins if (x / Path("pyproject.toml")).exists()
-    ]
-    print(f"Poetry plugins: {list_plugins(poetry_pytest)}")
-
-    other_plugins = [
-        x for x in plugins if x not in pip_pytest and x not in poetry_pytest
-    ]
-    print(f"Other plugins: {list_plugins(other_plugins)}")
-
-    for p in sorted(pip_pytest):
-        yield Plugin(
-            name=p.name,
-            path=p,
-            language="python",
-            framework="pip",
-            details={
-                "requirements": p/Path('requirements.txt'),
-                "devrequirements": p/Path('requirements-dev.txt'),
-            }
-        )
-
-    for p in sorted(poetry_pytest):
-        yield Plugin(
-            name=p.name,
-            path=p,
-            language="python",
-            framework="poetry",
-            details={
-                "pyproject": p / Path("pyproject.toml"),
-            }
-        )
-
-    for p in sorted(other_plugins):
-        yield Plugin(
-            name=p.name,
-            path=p,
-            language="other",
-            framework="generic",
-            details={
-                "requirements": p / Path("tests/requirements.txt"),
-                "setup": p / Path("tests/setup.sh"),
-            }
-        )
 
 def prepare_env(p: Plugin, directory: Path) -> bool:
     """ Returns whether we can run at all. Raises error if preparing failed.
@@ -109,8 +29,9 @@ def prepare_env(p: Plugin, directory: Path) -> bool:
     else:
         raise ValueError(f"Unknown framework {p.framework}")
 
+
 def prepare_env_poetry(p: Plugin, directory: Path) -> bool:
-    logging.info(f"Installing a new poetry virtualenv")
+    logging.info("Installing a new poetry virtualenv")
 
     pip3 = directory / 'bin' / 'pip3'
     poetry = directory / 'bin' / 'poetry'
@@ -140,7 +61,6 @@ def prepare_env_poetry(p: Plugin, directory: Path) -> bool:
         poetry, 'config', 'virtualenvs.create', 'false'
     ], cwd=workdir)
 
-
     # Now we can proceed with the actual implementation
     logging.info(f"Installing poetry {poetry} dependencies from {p.details['pyproject']}")
     subprocess.check_call([
@@ -149,6 +69,7 @@ def prepare_env_poetry(p: Plugin, directory: Path) -> bool:
 
     subprocess.check_call([pip3, 'freeze'])
     return True
+
 
 def prepare_env_pip(p: Plugin, directory: Path):
     pip_path = directory / 'bin' / 'pip3'
@@ -226,15 +147,6 @@ def install_pyln_testing(pip_path):
         stderr=subprocess.STDOUT,
     )
 
-def get_testfiles(p: Plugin) -> List[PosixPath]:
-    return [
-        x for x in p.path.iterdir()
-        if (x.is_dir() and x.name == 'tests')
-        or (x.name.startswith("test_") and x.name.endswith('.py'))
-    ]
-
-def has_testfiles(p: Plugin) -> bool:
-    return len(get_testfiles(p)) > 0
 
 def run_one(p: Plugin) -> bool:
     print("Running tests on plugin {p.name}".format(p=p))
@@ -293,17 +205,10 @@ def run_one(p: Plugin) -> bool:
         )
         return True
     except Exception as e:
-        logging.warning(f"Error while executing ")
+        logging.warning(f"Error while executing: {e}")
         return False
     finally:
         print("##[endgroup]")
-
-def configure_git():
-    # Git requires some user and email to be configured in order to work in the context of GitHub Actions.
-    subprocess.run(
-        ["git", "config", "--global", "user.email", '"lightningd@github.plugins.repo"']
-    )
-    subprocess.run(["git", "config", "--global", "user.name", '"lightningd"'])
 
 
 # gather data
