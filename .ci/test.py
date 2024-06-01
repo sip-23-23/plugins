@@ -11,6 +11,14 @@ from utils import (Plugin, configure_git, enumerate_plugins, get_testfiles,
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
+global_dependencies = [
+    'pytest',
+    'pytest-xdist',
+    'pytest-timeout',
+]
+
+pip_opts = ['-qq']
+
 
 def prepare_env(p: Plugin, directory: Path) -> bool:
     """ Returns whether we can run at all. Raises error if preparing failed.
