@@ -17,8 +17,6 @@ def prepare_env(p: Plugin, directory: Path) -> bool:
     """
     subprocess.check_call(['python3', '-m', 'venv', '--clear', directory])
     os.environ['PATH'] += f":{directory}"
-    pip_path = directory / 'bin' / 'pip3'
-    python_path = directory / 'bin' / 'python'
 
     if p.framework == "pip":
         return prepare_env_pip(p, directory)
@@ -97,6 +95,7 @@ def prepare_env_pip(p: Plugin, directory: Path):
         )
     install_pyln_testing(pip_path)
     return True
+
 
 def prepare_generic(p: Plugin, directory: Path):
     pip_path = directory / 'bin' / 'pip3'
