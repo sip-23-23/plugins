@@ -46,7 +46,7 @@ def prepare_env_poetry(p: Plugin, directory: Path) -> bool:
     subprocess.check_call(['which', 'python3'])
 
     subprocess.check_call([
-        pip3, 'install', '-U', *pip_opts, 'pip', 'wheel', 'poetry==1.7.1'
+        pip3, 'install', '-U', *pip_opts, 'pip', 'wheel', 'poetry'
     ], cwd=p.path.parent)
 
     # Install pytest (eventually we'd want plugin authors to include
