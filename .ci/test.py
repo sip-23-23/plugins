@@ -269,7 +269,7 @@ def write_gather_data_file(plugin_name: str, result, workflow: str, python_versi
     return filename
 
 
-def run_all(workflow: str, python_version: str, update_badges: str, plugin_names: list):
+def run_all(workflow: str, python_version: str, update_badges: bool, plugin_names: list):
     root_path = subprocess.check_output([
         'git',
         'rev-parse',
@@ -309,5 +309,5 @@ if __name__ == "__main__":
     parser.add_argument("--update-badges", action='store_true', help="Whether badges data should be updated")
     parser.add_argument("plugins", nargs="*", default=[], help="List of plugins")
     args = parser.parse_args()
-    print(args.update_badges)
+
     run_all(args.workflow, args.python_version, args.update_badges, args.plugins)
