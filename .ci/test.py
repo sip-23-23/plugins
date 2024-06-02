@@ -269,7 +269,7 @@ def write_gather_data_file(plugin_name: str, result, workflow: str, python_versi
     return filename
 
 
-def run_all(workflow: str, python_version: str, update_badges: bool, plugin_names: list):
+def run_all(workflow: str, python_version: str, update_badges: str, plugin_names: list):
     root_path = subprocess.check_output([
         'git',
         'rev-parse',
