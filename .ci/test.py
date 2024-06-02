@@ -309,5 +309,5 @@ if __name__ == "__main__":
     parser.add_argument("--update-badges", action='store_true', help="Whether badges data should be updated")
     parser.add_argument("plugins", nargs="*", default=[], help="List of plugins")
     args = parser.parse_args()
-
+    print(args.update_badges)
     run_all(args.workflow, args.python_version, args.update_badges, args.plugins)
