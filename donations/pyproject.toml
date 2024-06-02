@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-qrcode = "6.1"
+qrcode = "^7.4.2"
 flask = "2.0.3"
 pyln-client = "^23.11"
 flask-bootstrap = "^3.3.7.1"
