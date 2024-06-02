@@ -219,7 +219,7 @@ def run_one(p: Plugin) -> bool:
 
 
 # gather data
-def collect_gather_data(results, success):
+def collect_gather_data(results: list, success: bool) -> dict:
     gather_data = {}
     for t in results:
         p = t[0]
@@ -231,16 +231,17 @@ def collect_gather_data(results, success):
     return gather_data
 
 
-def push_gather_data(data, workflow, python_version):
+def push_gather_data(data: dict, workflow: str, python_version: str):
     print("Pushing gather data...")
     configure_git()
     subprocess.run(["git", "fetch"])
     subprocess.run(["git", "checkout", "badges"])
     filenames_to_add = []
     for plugin_name, result in data.items():
-        filenames_to_add.append(git_add_gather_data(
+        filename = write_gather_data_file(
             plugin_name, result, workflow, python_version
-        ))
+        )
+        filenames_to_add.append(filename)
     output = subprocess.check_output(list(chain(["git", "add", "-v"], filenames_to_add))).decode("utf-8")
     print(f"output from git add: {output}")
     if output != "":
@@ -257,7 +258,7 @@ def push_gather_data(data, workflow, python_version):
     print("Done.")
 
 
-def git_add_gather_data(plugin_name, result, workflow, python_version):
+def write_gather_data_file(plugin_name: str, result, workflow: str, python_version: str) -> str:
     _dir = f".badges/gather_data/{workflow}/{plugin_name}"
     filename = os.path.join(_dir, f"python{python_version}.txt")
     os.makedirs(_dir, exist_ok=True)
@@ -268,7 +269,7 @@ def git_add_gather_data(plugin_name, result, workflow, python_version):
     return filename
 
 
-def run_all(workflow, python_version, update_badges, plugin_names):
+def run_all(workflow: str, python_version: str, update_badges: bool, plugin_names: list):
     root_path = subprocess.check_output([
         'git',
         'rev-parse',

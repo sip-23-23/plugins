@@ -44,7 +44,7 @@ def has_testfiles(p: Plugin) -> bool:
     return len(get_testfiles(p)) > 0
 
 
-def list_plugins(plugins):
+def list_plugins(plugins: list) -> str:
     return ", ".join([p.name for p in sorted(plugins)])
 
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from utils import configure_git, enumerate_plugins
 
 
-def update_and_commit_badge(plugin_name, passed, workflow):
+def update_and_commit_badge(plugin_name: str, passed: bool, workflow: str) -> bool:
     json_data = {"schemaVersion": 1, "label": "", "message": " ✔ ", "color": "green"}
     if not passed:
         json_data.update({"message": "✗", "color": "red"})
@@ -29,7 +29,7 @@ def update_and_commit_badge(plugin_name, passed, workflow):
     return False
 
 
-def push_badges_data(workflow, num_of_python_versions):
+def push_badges_data(workflow: str, num_of_python_versions: int):
     print("Pushing badges data...")
     configure_git()
     subprocess.run(["git", "fetch"])
